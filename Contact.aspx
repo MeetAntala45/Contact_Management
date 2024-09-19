@@ -155,41 +155,44 @@
 <body>
     <form id="form1" runat="server">
         <nav class="navbar navbar-expand-lg navbar-light">
-            <a class="navbar-brand" href="Contact.aspx">
-                <i class="bi bi-house-door"></i> Home
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <asp:LinkButton ID="btnAddContact" runat="server" CssClass="nav-link" OnClick="btnAdd_Click">
-                            <i class="bi bi-person-add"></i> Add Contact
-                        </asp:LinkButton>
-                    </li>
-                    <li class="nav-item">
-                        <asp:LinkButton ID="btnSearch" runat="server" CssClass="nav-link" OnClick="btnSearch_Click">
-                            <i class="bi bi-search"></i> Search
-                        </asp:LinkButton>
-                    </li>
-                    <li class="nav-item">
-                        <asp:FileUpload ID="fileUploadContacts" runat="server" CssClass="nav-link" />
-                        <asp:Button ID="btnImport" runat="server" Text="Import" CssClass="btn btn-light" OnClick="btnImport_Click" />
-                    </li>
-                    <li class="nav-item">
-                        <asp:LinkButton ID="btnExport" runat="server" CssClass="nav-link" OnClick="btnExport_Click">
-                            <i class="bi bi-download"></i> Export Contacts
-                        </asp:LinkButton>
-                    </li>
-                    <li class="nav-item">
-                        <asp:LinkButton ID="btnLogout" runat="server" CssClass="nav-link" OnClick="btnLogout_Click">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </asp:LinkButton>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+    <a class="navbar-brand" href="Contact.aspx">
+        <i class="bi bi-house-door"></i> Home
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <asp:LinkButton ID="btnAddContact" runat="server" CssClass="nav-link" OnClick="btnAdd_Click">
+                    <i class="bi bi-person-add"></i> Add Contact
+                </asp:LinkButton>
+            </li>
+            <li class="nav-item">
+                <asp:LinkButton ID="btnSearch" runat="server" CssClass="nav-link" OnClick="btnSearch_Click">
+                    <i class="bi bi-search"></i> Search
+                </asp:LinkButton>
+            </li>
+            <li class="nav-item">
+                <div class="nav-link">
+                    <asp:FileUpload ID="fileUploadContacts" runat="server" CssClass="d-inline-block" />
+                    <asp:Button ID="btnImport" runat="server" Text="Import" CssClass="btn btn-light btn-sm ml-2" OnClick="btnImport_Click" />
+                </div>
+            </li>
+            <li class="nav-item">
+                <asp:LinkButton ID="btnExport" runat="server" CssClass="nav-link" OnClick="btnExport_Click">
+                    <i class="bi bi-download"></i> Export Contacts
+                </asp:LinkButton>
+            </li>
+            <li class="nav-item">
+                <asp:LinkButton ID="btnLogout" runat="server" CssClass="nav-link" OnClick="btnLogout_Click">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </asp:LinkButton>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 
         <!-- Search Contact -->
         <div class="container search-container" id="searchContainer" runat="server" visible="false">
