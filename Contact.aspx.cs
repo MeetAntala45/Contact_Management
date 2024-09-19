@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Configuration;
 using System.Data;
 using System.Web.UI.WebControls;
@@ -29,7 +29,7 @@ namespace ContactManagement
 
         protected void LoadContacts(string searchQuery = "")
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 string query = "SELECT ContactID, ContactName, ContactPhone FROM Contacts WHERE UserID = (SELECT UserID FROM Users WHERE Username = @Username)";
                 if (!string.IsNullOrEmpty(searchQuery))
@@ -38,14 +38,14 @@ namespace ContactManagement
                 }
                 query += " ORDER BY ContactName";
 
-                SqlCommand cmd = new SqlCommand(query, con);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Username", Session["Username"]);
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
                     cmd.Parameters.AddWithValue("@SearchQuery", "%" + searchQuery + "%");
                 }
 
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
@@ -101,10 +101,10 @@ namespace ContactManagement
 
         protected void DeleteContact(int contactId)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 string query = "DELETE FROM Contacts WHERE ContactID = @ContactID";
-                SqlCommand cmd = new SqlCommand(query, con);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@ContactID", contactId);
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -137,13 +137,13 @@ namespace ContactManagement
         //  fetch all the contacts and for export
         private DataTable GetContactsForExport()
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 string query = "SELECT ContactName, ContactPhone FROM Contacts WHERE UserID = (SELECT UserID FROM Users WHERE Username = @Username)";
-                SqlCommand cmd = new SqlCommand(query, con);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@Username", Session["Username"]);
 
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                MySqlDataAdapter da = new MySqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 return dt;

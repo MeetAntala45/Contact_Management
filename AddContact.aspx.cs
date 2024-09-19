@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Configuration;
 
 namespace ContactManagement
@@ -39,9 +39,9 @@ namespace ContactManagement
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
-                 SqlCommand getUserIdCmd = new SqlCommand("SELECT UserID FROM Users WHERE Username = @Username", con);
+                MySqlCommand getUserIdCmd = new MySqlCommand("SELECT UserID FROM Users WHERE Username = @Username", con);
                 getUserIdCmd.Parameters.AddWithValue("@Username", username);
 
                 con.Open();
@@ -57,12 +57,13 @@ namespace ContactManagement
                 int userId = Convert.ToInt32(userIdResult);
 
                 // Check if the contact name already exists for this user
-                SqlCommand checkNameCmd = new SqlCommand("SELECT COUNT(*) FROM Contacts WHERE ContactName = @Name AND UserID = @UserID", con);
+                MySqlCommand checkNameCmd = new MySqlCommand("SELECT COUNT(*) FROM Contacts WHERE ContactName = @Name AND UserID = @UserID", con);
                 checkNameCmd.Parameters.AddWithValue("@Name", contactName);
                 checkNameCmd.Parameters.AddWithValue("@UserID", userId);
 
                 con.Open();
-                int nameExists = (int)checkNameCmd.ExecuteScalar();
+                object nameExistsResult = checkNameCmd.ExecuteScalar();
+                int nameExists = Convert.ToInt32(nameExistsResult);
                 con.Close();
 
                 if (nameExists > 0)
@@ -72,12 +73,13 @@ namespace ContactManagement
                 }
 
                 // Check if the contact phone number already exists for this user
-                SqlCommand checkPhoneCmd = new SqlCommand("SELECT COUNT(*) FROM Contacts WHERE ContactPhone = @Phone AND UserID = @UserID", con);
+                MySqlCommand checkPhoneCmd = new MySqlCommand("SELECT COUNT(*) FROM Contacts WHERE ContactPhone = @Phone AND UserID = @UserID", con);
                 checkPhoneCmd.Parameters.AddWithValue("@Phone", contactPhone);
                 checkPhoneCmd.Parameters.AddWithValue("@UserID", userId);
 
                 con.Open();
-                int phoneExists = (int)checkPhoneCmd.ExecuteScalar();
+                object phoneExistsresult = checkPhoneCmd.ExecuteScalar();
+                int phoneExists = Convert.ToInt32(phoneExistsresult);
                 con.Close();
 
                 if (phoneExists > 0)
@@ -86,7 +88,7 @@ namespace ContactManagement
                     return;
                 }
 
-                 SqlCommand cmd = new SqlCommand("INSERT INTO Contacts (ContactName, ContactPhone, UserID) VALUES (@Name, @Phone, @UserID)", con);
+                 MySqlCommand cmd = new MySqlCommand("INSERT INTO Contacts (ContactName, ContactPhone, UserID) VALUES (@Name, @Phone, @UserID)", con);
                 cmd.Parameters.AddWithValue("@Name", contactName);
                 cmd.Parameters.AddWithValue("@Phone", contactPhone);
                 cmd.Parameters.AddWithValue("@UserID", userId);

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Configuration;
 
 namespace ContactManagement
@@ -23,13 +23,13 @@ namespace ContactManagement
 
         private void LoadContactData()
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
-                 SqlCommand cmd = new SqlCommand("SELECT ContactName, ContactPhone FROM Contacts WHERE ContactID = @ContactID", con);
+                MySqlCommand cmd = new MySqlCommand("SELECT ContactName, ContactPhone FROM Contacts WHERE ContactID = @ContactID", con);
                 cmd.Parameters.AddWithValue("@ContactID", contactId);
 
                 con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                MySqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
                     txtContactName.Text = reader["ContactName"].ToString();
@@ -54,10 +54,10 @@ namespace ContactManagement
             string contactPhone = txtContactPhone.Text;
             contactId = Convert.ToInt32(Request.QueryString["ContactId"]);
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
                 string query = "UPDATE Contacts SET ContactName = @ContactName, ContactPhone = @ContactPhone WHERE ContactID = @ContactID";
-                SqlCommand cmd = new SqlCommand(query, con);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 cmd.Parameters.AddWithValue("@ContactName", contactName);
                 cmd.Parameters.AddWithValue("@ContactPhone", contactPhone);
                 cmd.Parameters.AddWithValue("@ContactID", contactId);

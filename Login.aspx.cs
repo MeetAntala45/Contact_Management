@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Configuration;
 
 namespace ContactManagement
@@ -13,9 +13,9 @@ namespace ContactManagement
             string username = txtUsername.Text;
             string password = txtPassword.Text;  
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
-                 SqlCommand cmd = new SqlCommand("SELECT PasswordHash FROM Users WHERE Username = @Username", con);
+                MySqlCommand cmd = new MySqlCommand("SELECT Password FROM Users WHERE Username = @Username", con);
                 cmd.Parameters.AddWithValue("@Username", username);
 
                 con.Open();

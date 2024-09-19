@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using System.Configuration;
 
 namespace ContactManagement
@@ -16,13 +16,14 @@ namespace ContactManagement
             string password = txtPassword.Text; 
             string email = txtEmail.Text;
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (MySqlConnection con = new MySqlConnection(connectionString))
             {
-                SqlCommand checkUserCmd = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username", con);
+                MySqlCommand checkUserCmd = new MySqlCommand("SELECT COUNT(*) FROM Users WHERE Username = @Username", con);
                 checkUserCmd.Parameters.AddWithValue("@Username", username);
 
                 con.Open();
-                int userExists = (int)checkUserCmd.ExecuteScalar();
+               object userExistsResult = checkUserCmd.ExecuteScalar();
+                int userExists = Convert.ToInt32(userExistsResult);
 
                 if (userExists > 0)
                 {
@@ -30,7 +31,7 @@ namespace ContactManagement
                 }
                 else
                 {
-                     SqlCommand cmd = new SqlCommand("INSERT INTO Users (Username, Password, Email) VALUES (@Username, @Password, @Email)", con);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Users (Username, Password, Email) VALUES (@Username, @Password, @Email)", con);
                     cmd.Parameters.AddWithValue("@Username", username);
                     cmd.Parameters.AddWithValue("@Password", password);  
                     cmd.Parameters.AddWithValue("@Email", email);
