@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Web.UI.WebControls;
 using System.Web.UI;
+using System.IO;
 
 namespace ContactManagement
 {
@@ -176,5 +177,86 @@ namespace ContactManagement
             return sb.ToString();
         }
 
+        protected void btnImport_Click(object sender, EventArgs e)
+        {
+            if (fileUploadContacts.HasFile)
+            {
+                try
+                {
+                    StreamReader sr = new StreamReader(fileUploadContacts.PostedFile.InputStream);
+                    string csvData = sr.ReadToEnd();
+
+                    ImportContacts(csvData);
+
+                    LoadContacts();
+
+                    lblMessage.Text = "Contacts imported successfully.";
+                }
+                catch (Exception ex)
+                {
+                    lblMessage.Text = "Error: " + ex.Message;
+                }
+            }
+            else
+            {
+                lblMessage.Text = "Please select a CSV file to import.";
+            }
+        }
+
+        private void ImportContacts(string csvData)
+        {
+            string username = Session["Username"]?.ToString();
+            if (string.IsNullOrEmpty(username))
+            {
+                lblMessage.Text = "User is not logged in.";
+                return;
+            }
+
+            using (MySqlConnection con = new MySqlConnection(connectionString))
+            {
+                MySqlCommand getUserIdCmd = new MySqlCommand("SELECT UserID FROM Users WHERE Username = @Username", con);
+                getUserIdCmd.Parameters.AddWithValue("@Username", username);
+                con.Open();
+                object userIdResult = getUserIdCmd.ExecuteScalar();
+                con.Close();
+
+                if (userIdResult == null || userIdResult == DBNull.Value)
+                {
+                    lblMessage.Text = "User not found.";
+                    return;
+                }
+
+                int userId = Convert.ToInt32(userIdResult);
+
+                using (StringReader reader = new StringReader(csvData))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] fields = line.Split(',');
+                        if (fields.Length >= 2)
+                        {
+                            string contactName = fields[0].Trim();
+                            string contactPhone = fields[1].Trim();
+
+                            if (contactPhone.Length != 10)
+                            {
+                                continue; 
+                            }
+
+                            using (MySqlCommand cmd = new MySqlCommand("INSERT INTO Contacts (ContactName, ContactPhone, UserID) VALUES (@Name, @Phone, @UserID)", con))
+                            {
+                                cmd.Parameters.AddWithValue("@Name", contactName);
+                                cmd.Parameters.AddWithValue("@Phone", contactPhone);
+                                cmd.Parameters.AddWithValue("@UserID", userId);
+                                con.Open();
+                                cmd.ExecuteNonQuery();
+                                con.Close();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
